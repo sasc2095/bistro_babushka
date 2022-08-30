@@ -15,7 +15,8 @@
       <button data-menu="desserter">Desserter</button>
       <button data-menu="drikkevarer">Drikkevarer</button>
     </nav>
-    <main id="holder"></main>
+
+    <section id="holder"></section>
     <template>
       <article id="liste">
         <h2 class="navn"></h2>
@@ -26,6 +27,14 @@
         <p id="oprindelse"></p>
       </article>
     </template>
+
+    <div id="popup">
+      <article>
+        <img src="" alt="" />
+        <h2></h2>
+        <p></p>
+      </article>
+    </div>
 
     <footer></footer>
   </body>
@@ -45,9 +54,28 @@
   button :active {
     background-color: blue;
   }
+
+  #popup {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    background-color: #000000aa;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    display: none;
+  }
+
+  #popup article {
+    width: 80%;
+    background-color: white;
+  }
 </style>
 
 <script>
+  const header = document.querySelector("h1");
   const endpoint = "https://babushka-dd8a.restdb.io/rest/menu";
   const mereinfo = {
     headers: {
@@ -55,10 +83,8 @@
     },
   };
 
-  const header = document.querySelector("header h1");
-
   document.addEventListener("DOMContentLoaded", start);
-  let menu;
+  let retter;
   let filter = "alle";
 
   //første funktion der kaldes efter DOM er loaded
@@ -67,62 +93,48 @@
     filterKnapper.forEach((knap) => knap.addEventListener("click", filtererItem));
   }
 
-  async function hentData() {
-    const response = await fetch(endpoint, mereinfo);
-    menu = await response.json();
-    console.log(menu);
-    vis();
-  }
-
   function filtererItem() {
     filter = this.dataset.menu;
     document.querySelector(".valgt").classList.remove("valgt");
     this.classList.add("valgt"); //sæt variabel "filter" til værdien af data-menu på den knap der er klikket på
-    visMenu(); //kald funktion visMenu efter det nye filter er sat
+    visRetter(); //kald funktion visMenu efter det nye filter er sat
     header.textContent = this.textContent; // h1 opdateres til det der trykkes på
   }
 
-  //   async function loadJson() {
-  //     const JSONData = await fetch("https://babushka-dd8a.restdb.io/rest/menu", mereinfo);
-  //     const json = await JSONData.json();
-  //     menu = json;
-  //     console.log(menu);
-  //     visMenu();
-  //   }
+  async function hentData() {
+    const response = await fetch(endpoint, mereinfo);
+    retter = await response.json();
+    console.log(retter);
+    visRetter();
+  }
 
-  //funktion der viser menu i liste view
-
-  function visMenu() {
+  function visRetter() {
     // console.log(retter);
-    const dest = document.querySelector("#liste"); //container til articles
+    const dest = document.querySelector("#holder"); //container til articles
     const skabelon = document.querySelector("template").content; //select indhold ad html skabelon (article)
     dest.textContent = ""; //ryd container inden ny loop
-    menu.forEach((item) => {
-      if (filter == "alle" || filter == item.kategori) {
+    retter.forEach((ret) => {
+      //item er en intern variabel
+      if (filter == "alle" || filter == ret.kategori) {
         const klon = skabelon.cloneNode(true);
-        klon.querySelector(".billednavn").src = "medium/" + item.billednavn + "-md.jpg";
-        klon.querySelector(".navn").textContent = item.navn;
-        klon.querySelector("#kortbeskrivelse").textContent = item.kortbeskrivelse;
-        klon.querySelector("#pris").textContent = "Pris:" + item.pris + ",-";
+        klon.querySelector("article").addEventListener("click", () => visRet(ret));
+        klon.querySelector(".billednavn").src = "medium/" + ret.billednavn + "-md.jpg";
+        klon.querySelector(".navn").textContent = ret.navn;
+        klon.querySelector("#kortbeskrivelse").textContent = ret.kortbeskrivelse;
+        klon.querySelector("#pris").textContent = "Pris:" + ret.pris + ",-";
         dest.appendChild(klon);
       }
     });
   }
 
-  const main = document.querySelector("main");
-  const template = document.querySelector("template").content;
+  document.querySelector("#popup").addEventListener("click", () => (popup.style = "none"));
 
-  function vis(json) {
-    console.log(json);
-
-    menu.forEach((item) => {
-      const klon = template.cloneNode(true);
-      klon.querySelector(".billednavn").src = "medium/" + item.billednavn + "-md.jpg";
-      klon.querySelector(".navn").textContent = item.navn;
-      klon.querySelector("#kortbeskrivelse").textContent = item.kortbeskrivelse;
-      klon.querySelector("#pris").textContent = "Pris:" + item.pris + ",-";
-      main.appendChild(klon);
-    });
+  function visRet(item) {
+    console.log(item);
+    const popup = document.querySelector("#popup");
+    popup.style.display = "flex";
+    popup.querySelector("img").src = "medium/" + item.billednavn + "-md.jpg";
+    popup.querySelector("h2").textContent = item;
   }
 
   hentData();
