@@ -7,45 +7,63 @@
     <title>Bistro Basbushka</title>
   </head>
   <body>
-    <h1>Alle</h1>
-    <nav>
-      <button data-menu="alle" class="valgt">Alle</button>
-      <button data-menu="forretter">Forretter</button>
-      <button data-menu="hovedretter">Hovedretter</button>
-      <button data-menu="desserter">Desserter</button>
-      <button data-menu="drikkevarer">Drikkevarer</button>
-    </nav>
+    <main>
+      <h1>Alle</h1>
+      <nav>
+        <button data-menu="alle" class="valgt">Alle</button>
+        <button data-menu="forretter">Forretter</button>
+        <button data-menu="hovedretter">Hovedretter</button>
+        <button data-menu="desserter">Desserter</button>
+        <button data-menu="drikkevarer">Drikkevarer</button>
+      </nav>
 
-    <section id="holder"></section>
-    <template>
-      <article id="liste">
-        <h2 class="navn"></h2>
-        <img class="billednavn" src="" alt="" />
-        <p id="kortbeskrivelse"></p>
-        <p id="langbeskrivelse"></p>
-        <p id="pris"></p>
-        <p id="oprindelse"></p>
-      </article>
-    </template>
+      <section id="holder"></section>
+      <template>
+        <article id="liste">
+          <h2 class="navn"></h2>
+          <img class="billednavn" src="" alt="" />
+          <p id="kortbeskrivelse"></p>
+          <p id="langbeskrivelse"></p>
+          <p id="pris"></p>
+          <p id="oprindelse"></p>
+        </article>
+      </template>
 
-    <div id="popup">
-      <article>
-        <img src="" alt="" />
-        <h2></h2>
-        <p></p>
-      </article>
-    </div>
-
+      <div id="popup">
+        <article>
+          <img class="billednavn" src="" alt="" />
+          <h2 class="navn"></h2>
+          <p id="kortbeskrivelse"></p>
+          <p id="langbeskrivelse"></p>
+          <p id="pris"></p>
+          <p id="oprindelse"></p>
+        </article>
+      </div>
+    </main>
     <footer></footer>
   </body>
 </html>
 
 <style>
-  body {
+  main {
     width: 1200px;
     max-width: 100%;
     margin: 0 auto;
   }
+
+  #holder {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 10px;
+  }
+
+  img {
+    max-width: 100%;
+    aspect-ratio: 1/1;
+    height: auto;
+    object-fit: cover;
+  }
+
   button {
     align-items: center;
     background-color: pink;
@@ -55,7 +73,10 @@
     background-color: blue;
   }
 
-  #popup {
+  #liste:nth-child(2n + 1) {
+    background-color: pink;
+  }
+  */ #popup {
     position: fixed;
     width: 100vw;
     height: 100vh;
@@ -133,8 +154,9 @@
     console.log(item);
     const popup = document.querySelector("#popup");
     popup.style.display = "flex";
-    popup.querySelector("img").src = "medium/" + item.billednavn + "-md.jpg";
-    popup.querySelector("h2").textContent = item;
+    popup.querySelector(".billednavn").src = "medium/" + item.billednavn + "-md.jpg";
+    popup.querySelector(".navn").textContent = item.navn;
+    popup.querySelector("#kortbeskrivelse").textContent = item.kortbeskrivelse;
   }
 
   hentData();
